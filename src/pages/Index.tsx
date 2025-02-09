@@ -1,13 +1,10 @@
-
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Trophy, Users, Award, Book, CircleDollarSign, Settings } from "lucide-react";
+import { Trophy, Users, Award, Book, CircleDollarSign } from "lucide-react";
 import { PlayerCategory, RankingType } from "@/types/models";
 import { PLAYER_COSTS, INITIAL_POINTS, ERROR_POINTS } from "@/constants/gameRules";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,9 +15,6 @@ const Index = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("rankings");
   const [session, setSession] = useState<any>(null);
-  const [googleClientId, setGoogleClientId] = useState("");
-  const [googleClientSecret, setGoogleClientSecret] = useState("");
-  const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -35,25 +29,6 @@ const Index = () => {
 
     return () => subscription.unsubscribe();
   }, []);
-
-  const handleSaveGoogleSettings = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      // Qui dovresti salvare le credenziali in modo sicuro
-      // Per ora mostreremo solo un toast di conferma
-      toast({
-        title: "Configurazione salvata",
-        description: "Le credenziali di Google sono state salvate con successo",
-      });
-      setShowSettings(false);
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Errore",
-        description: error.message,
-      });
-    }
-  };
 
   if (!session) {
     return (
@@ -92,52 +67,8 @@ const Index = () => {
           >
             Logout
           </Button>
-          <Button
-            variant="outline"
-            onClick={() => setShowSettings(!showSettings)}
-          >
-            <Settings className="w-4 h-4 mr-2" />
-            Configurazione
-          </Button>
         </div>
       </header>
-
-      {showSettings && (
-        <Card className="max-w-md mx-auto mb-8">
-          <CardHeader>
-            <CardTitle>Configurazione Google OAuth</CardTitle>
-            <CardDescription>
-              Inserisci le credenziali OAuth di Google per abilitare il login
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSaveGoogleSettings} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="clientId">Client ID</Label>
-                <Input
-                  id="clientId"
-                  value={googleClientId}
-                  onChange={(e) => setGoogleClientId(e.target.value)}
-                  placeholder="Inserisci il Client ID di Google"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="clientSecret">Client Secret</Label>
-                <Input
-                  id="clientSecret"
-                  type="password"
-                  value={googleClientSecret}
-                  onChange={(e) => setGoogleClientSecret(e.target.value)}
-                  placeholder="Inserisci il Client Secret di Google"
-                />
-              </div>
-              <Button type="submit" className="w-full">
-                Salva configurazione
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      )}
 
       <Tabs defaultValue={activeTab} className="max-w-4xl mx-auto">
         <TabsList className="grid w-full max-w-2xl mx-auto mb-8 grid-cols-5">
