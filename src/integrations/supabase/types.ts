@@ -9,7 +9,122 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      errors: {
+        Row: {
+          created_at: string
+          error_type: string
+          id: string
+          player_id: string | null
+          points: number
+        }
+        Insert: {
+          created_at?: string
+          error_type: string
+          id?: string
+          player_id?: string | null
+          points: number
+        }
+        Update: {
+          created_at?: string
+          error_type?: string
+          id?: string
+          player_id?: string | null
+          points?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "errors_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      players: {
+        Row: {
+          category: string
+          cost: number
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          cost: number
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          cost?: number
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          points: number | null
+          updated_at: string
+          username: string | null
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          points?: number | null
+          updated_at?: string
+          username?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          points?: number | null
+          updated_at?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
+      team_players: {
+        Row: {
+          created_at: string
+          player_id: string
+          profile_id: string
+        }
+        Insert: {
+          created_at?: string
+          player_id: string
+          profile_id: string
+        }
+        Update: {
+          created_at?: string
+          player_id?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_players_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_players_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
