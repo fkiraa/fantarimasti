@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,10 +8,42 @@ import { Button } from "@/components/ui/button";
 import { Trophy, Users, Award, Book, CircleDollarSign } from "lucide-react";
 import { PlayerCategory, RankingType } from "@/types/models";
 import { PLAYER_COSTS, INITIAL_POINTS, ERROR_POINTS } from "@/constants/gameRules";
+import { supabase } from "@/integrations/supabase/client";
+import AuthForm from "@/components/auth/AuthForm";
+import PlayersList from "@/components/players/PlayersList";
 
 const Index = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("rankings");
+  const [session, setSession] = useState<any>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  if (!session) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-6">
+        <header className="text-center mb-12">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent mb-2">
+            Fantarimasti
+          </h1>
+          <p className="text-primary/60">Accedi o registrati per iniziare</p>
+        </header>
+        <AuthForm />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-6 animate-fadeIn">
@@ -23,6 +55,19 @@ const Index = () => {
           Fantarimasti
         </h1>
         <p className="text-primary/60">Gestisci la tua squadra e scala le classifiche</p>
+        <Button 
+          variant="outline" 
+          className="mt-4"
+          onClick={() => {
+            supabase.auth.signOut();
+            toast({
+              title: "Logout effettuato",
+              description: "Hai effettuato il logout con successo",
+            });
+          }}
+        >
+          Logout
+        </Button>
       </header>
 
       <Tabs defaultValue={activeTab} className="max-w-4xl mx-auto">
@@ -90,25 +135,8 @@ const Index = () => {
             </Card>
           </TabsContent>
 
-          <TabsContent value="players" className="grid gap-6 animate-fadeIn">
-            {Object.values(PlayerCategory).map((category) => (
-              <Card key={category} className="backdrop-blur-lg bg-white/90 shadow-lg hover:shadow-xl transition-shadow">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Award className="w-5 h-5 text-purple-500" />
-                    {category}
-                  </CardTitle>
-                  <CardDescription>
-                    Costo: {PLAYER_COSTS[category]} punti
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-center text-primary/60">
-                    Giocatori in arrivo...
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
+          <TabsContent value="players" className="animate-fadeIn">
+            <PlayersList />
           </TabsContent>
 
           <TabsContent value="market" className="animate-fadeIn">
