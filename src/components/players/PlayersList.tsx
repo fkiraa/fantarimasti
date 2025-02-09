@@ -32,7 +32,16 @@ const PlayersList = () => {
         .order("name");
       
       if (error) throw error;
-      setPlayers(data || []);
+
+      // Convert the raw data to the correct Player type
+      const formattedPlayers: Player[] = (data || []).map(player => ({
+        id: player.id,
+        name: player.name,
+        category: player.category as PlayerCategory, // Convert string to enum
+        cost: player.cost
+      }));
+
+      setPlayers(formattedPlayers);
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -113,3 +122,4 @@ const PlayersList = () => {
 };
 
 export default PlayersList;
+
