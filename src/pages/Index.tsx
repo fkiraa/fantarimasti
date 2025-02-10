@@ -51,7 +51,7 @@ const Index = () => {
       .from('statistics')
       .select('*')
       .eq('profile_id', session.user.id)
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error('Error fetching statistics:', error);
@@ -64,6 +64,14 @@ const Index = () => {
         weeklyPoints: data.weekly_points,
         monthlyPoints: data.monthly_points,
         totalErrors: data.total_errors
+      });
+    } else {
+      // Se non ci sono statistiche, usiamo i valori predefiniti
+      setStats({
+        totalPoints: 0,
+        weeklyPoints: 0,
+        monthlyPoints: 0,
+        totalErrors: 0
       });
     }
   };
