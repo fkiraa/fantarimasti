@@ -1,20 +1,30 @@
+
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { Trophy, Users, Award, Book, CircleDollarSign } from "lucide-react";
+import { Trophy, Users, Award, Book, CircleDollarSign, Crown } from "lucide-react";
 import { PlayerCategory, RankingType } from "@/types/models";
 import { PLAYER_COSTS, INITIAL_POINTS, ERROR_POINTS } from "@/constants/gameRules";
 import { supabase } from "@/integrations/supabase/client";
 import AuthForm from "@/components/auth/AuthForm";
 import PlayersList from "@/components/players/PlayersList";
+import { NotificationBell } from "@/components/ui/notifications/NotificationBell";
+import { StatisticsCard } from "@/components/stats/StatisticsCard";
+import { AchievementsList } from "@/components/achievements/AchievementsList";
 
 const Index = () => {
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState("rankings");
+  const [activeTab, setActiveTab] = useState("dashboard");
   const [session, setSession] = useState<any>(null);
+  const [stats, setStats] = useState({
+    totalPoints: 0,
+    weeklyPoints: 0,
+    monthlyPoints: 0,
+    totalErrors: 0
+  });
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -29,6 +39,34 @@ const Index = () => {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (session?.user) {
+      fetchStatistics();
+    }
+  }, [session]);
+
+  const fetchStatistics = async () => {
+    const { data, error } = await supabase
+      .from('statistics')
+      .select('*')
+      .eq('profile_id', session.user.id)
+      .single();
+
+    if (error) {
+      console.error('Error fetching statistics:', error);
+      return;
+    }
+
+    if (data) {
+      setStats({
+        totalPoints: data.total_points,
+        weeklyPoints: data.weekly_points,
+        monthlyPoints: data.monthly_points,
+        totalErrors: data.total_errors
+      });
+    }
+  };
 
   if (!session) {
     return (
@@ -46,15 +84,18 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-6 animate-fadeIn">
-      <header className="text-center mb-12">
-        <div className="inline-block px-3 py-1 bg-primary/10 rounded-full text-primary text-sm mb-4">
-          Fantasy League Manager
+      <header className="flex justify-between items-center mb-12">
+        <div>
+          <div className="inline-block px-3 py-1 bg-primary/10 rounded-full text-primary text-sm mb-4">
+            Fantasy League Manager
+          </div>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent mb-2">
+            Fantarimasti
+          </h1>
+          <p className="text-primary/60">Gestisci la tua squadra e scala le classifiche</p>
         </div>
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent mb-2">
-          Fantarimasti
-        </h1>
-        <p className="text-primary/60">Gestisci la tua squadra e scala le classifiche</p>
-        <div className="flex justify-center gap-2 mt-4">
+        <div className="flex items-center gap-4">
+          <NotificationBell />
           <Button 
             variant="outline"
             onClick={() => {
@@ -70,8 +111,12 @@ const Index = () => {
         </div>
       </header>
 
-      <Tabs defaultValue={activeTab} className="max-w-4xl mx-auto">
-        <TabsList className="grid w-full max-w-2xl mx-auto mb-8 grid-cols-5">
+      <Tabs defaultValue={activeTab} className="max-w-6xl mx-auto">
+        <TabsList className="grid w-full max-w-2xl mx-auto mb-8 grid-cols-6">
+          <TabsTrigger value="dashboard" onClick={() => setActiveTab("dashboard")}>
+            <Crown className="w-4 h-4 mr-2" />
+            Dashboard
+          </TabsTrigger>
           <TabsTrigger value="rankings" onClick={() => setActiveTab("rankings")}>
             <Trophy className="w-4 h-4 mr-2" />
             Classifiche
@@ -95,6 +140,11 @@ const Index = () => {
         </TabsList>
 
         <div className="grid gap-6">
+          <TabsContent value="dashboard" className="grid gap-6 animate-fadeIn">
+            <StatisticsCard {...stats} />
+            <AchievementsList />
+          </TabsContent>
+
           <TabsContent value="rankings" className="grid gap-6 animate-fadeIn">
             {Object.values(RankingType).map((type) => (
               <Card key={type} className="backdrop-blur-lg bg-white/90 shadow-lg hover:shadow-xl transition-shadow">
