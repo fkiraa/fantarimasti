@@ -11,6 +11,8 @@ interface Notification {
   message: string;
   type: 'info' | 'warning' | 'error' | 'success';
   read: boolean;
+  created_at: string;
+  profile_id: string;
 }
 
 export const NotificationBell = () => {
@@ -37,8 +39,10 @@ export const NotificationBell = () => {
       return;
     }
 
-    setNotifications(data);
-    setUnreadCount(data.filter(n => !n.read).length);
+    if (data) {
+      setNotifications(data as Notification[]);
+      setUnreadCount(data.filter(n => !n.read).length);
+    }
   };
 
   const showLatestNotification = () => {
