@@ -12,7 +12,6 @@ import { RankingsTab } from "@/components/tabs/RankingsTab";
 import { PresidentsTab } from "@/components/tabs/PresidentsTab";
 import { MarketTab } from "@/components/tabs/MarketTab";
 import { RulesTab } from "@/components/tabs/RulesTab";
-import { ProfileCard } from "@/components/profile/ProfileCard";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
@@ -66,7 +65,6 @@ const Index = () => {
         totalErrors: data.total_errors
       });
     } else {
-      // Se non ci sono statistiche, usiamo i valori predefiniti
       setStats({
         totalPoints: 0,
         weeklyPoints: 0,
@@ -95,8 +93,8 @@ const Index = () => {
       <Header setActiveTab={setActiveTab} />
 
       <div className="max-w-6xl mx-auto">
-        <Tabs defaultValue={activeTab}>
-          {!isMobile && <TabList setActiveTab={setActiveTab} defaultValue={activeTab} />}
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          {!isMobile && <TabList setActiveTab={setActiveTab} />}
 
           <div className="grid gap-6">
             <TabsContent value="dashboard" className="grid gap-6 animate-fadeIn">
@@ -118,10 +116,6 @@ const Index = () => {
 
             <TabsContent value="market" className="animate-fadeIn">
               <MarketTab />
-            </TabsContent>
-
-            <TabsContent value="profile" className="animate-fadeIn">
-              <ProfileCard user={session.user} />
             </TabsContent>
 
             <TabsContent value="rules" className="animate-fadeIn">

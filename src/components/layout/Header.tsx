@@ -4,6 +4,7 @@ import { NotificationBell } from "@/components/ui/notifications/NotificationBell
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { MobileNav } from "./MobileNav";
+import { UserNav } from "./UserNav";
 
 interface HeaderProps {
   setActiveTab: (value: string) => void;
@@ -28,6 +29,7 @@ export const Header = ({ setActiveTab }: HeaderProps) => {
       </div>
       <div className="flex items-center gap-4">
         <NotificationBell />
+        <UserNav />
         <Button 
           variant="outline"
           onClick={() => {
