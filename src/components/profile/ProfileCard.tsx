@@ -36,10 +36,19 @@ export const ProfileCard = ({ user }: { user: User }) => {
         .from("profiles")
         .select("avatar_url, full_name, description")
         .eq("id", user.id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
-      if (data) setProfile(data);
+      if (data) {
+        setProfile(data);
+      } else {
+        // Se il profilo non esiste, creiamolo
+        const { error: insertError } = await supabase
+          .from("profiles")
+          .insert([{ id: user.id }]);
+
+        if (insertError) throw insertError;
+      }
     } catch (error: any) {
       console.error("Error fetching profile:", error.message);
     }
