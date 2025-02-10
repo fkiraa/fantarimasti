@@ -68,6 +68,58 @@ export type Database = {
           },
         ]
       }
+      market_listings: {
+        Row: {
+          buyer_id: string | null
+          created_at: string
+          id: string
+          player_id: string
+          price: number
+          seller_id: string
+          status: string
+        }
+        Insert: {
+          buyer_id?: string | null
+          created_at?: string
+          id?: string
+          player_id: string
+          price: number
+          seller_id: string
+          status?: string
+        }
+        Update: {
+          buyer_id?: string | null
+          created_at?: string
+          id?: string
+          player_id?: string
+          price?: number
+          seller_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_listings_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_listings_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_listings_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           created_at: string
@@ -135,21 +187,30 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
           created_at: string
+          description: string | null
+          full_name: string | null
           id: string
           points: number | null
           updated_at: string
           username: string | null
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string
+          description?: string | null
+          full_name?: string | null
           id: string
           points?: number | null
           updated_at?: string
           username?: string | null
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string
+          description?: string | null
+          full_name?: string | null
           id?: string
           points?: number | null
           updated_at?: string

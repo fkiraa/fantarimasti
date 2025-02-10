@@ -1,8 +1,6 @@
 
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { PlayerCategory, RankingType } from "@/types/models";
-import { PLAYER_COSTS, INITIAL_POINTS, ERROR_POINTS } from "@/constants/gameRules";
 import { supabase } from "@/integrations/supabase/client";
 import AuthForm from "@/components/auth/AuthForm";
 import PlayersList from "@/components/players/PlayersList";
@@ -14,6 +12,8 @@ import { RankingsTab } from "@/components/tabs/RankingsTab";
 import { PresidentsTab } from "@/components/tabs/PresidentsTab";
 import { MarketTab } from "@/components/tabs/MarketTab";
 import { RulesTab } from "@/components/tabs/RulesTab";
+import { ProfileCard } from "@/components/profile/ProfileCard";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -24,6 +24,7 @@ const Index = () => {
     monthlyPoints: 0,
     totalErrors: 0
   });
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -83,10 +84,10 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-6 animate-fadeIn">
-      <Header />
+      <Header setActiveTab={setActiveTab} />
 
       <Tabs defaultValue={activeTab} className="max-w-6xl mx-auto">
-        <TabList setActiveTab={setActiveTab} />
+        {!isMobile && <TabList setActiveTab={setActiveTab} />}
 
         <div className="grid gap-6">
           <TabsContent value="dashboard" className="grid gap-6 animate-fadeIn">
@@ -108,6 +109,10 @@ const Index = () => {
 
           <TabsContent value="market" className="animate-fadeIn">
             <MarketTab />
+          </TabsContent>
+
+          <TabsContent value="profile" className="animate-fadeIn">
+            <ProfileCard user={session.user} />
           </TabsContent>
 
           <TabsContent value="rules" className="animate-fadeIn">
