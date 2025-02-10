@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { TabsContent } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import AuthForm from "@/components/auth/AuthForm";
 import PlayersList from "@/components/players/PlayersList";
@@ -94,8 +94,8 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-6 animate-fadeIn">
       <Header setActiveTab={setActiveTab} />
 
-      <Tabs defaultValue={activeTab} className="max-w-6xl mx-auto">
-        {!isMobile && <TabList setActiveTab={setActiveTab} />}
+      <div className="max-w-6xl mx-auto">
+        {!isMobile && <TabList setActiveTab={setActiveTab} defaultValue={activeTab} />}
 
         <div className="grid gap-6">
           <TabsContent value="dashboard" className="grid gap-6 animate-fadeIn">
@@ -127,9 +127,10 @@ const Index = () => {
             <RulesTab />
           </TabsContent>
         </div>
-      </Tabs>
+      </div>
     </div>
   );
 };
 
 export default Index;
+

@@ -1,14 +1,15 @@
 
-import { TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trophy, Users, Award, Book, CircleDollarSign, Crown, UserCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface TabListProps {
   setActiveTab: (value: string) => void;
   orientation?: "horizontal" | "vertical";
+  defaultValue?: string;
 }
 
-export const TabList = ({ setActiveTab, orientation = "horizontal" }: TabListProps) => {
+export const TabList = ({ setActiveTab, orientation = "horizontal", defaultValue = "dashboard" }: TabListProps) => {
   const tabItems = [
     { value: "dashboard", icon: Crown, label: "Dashboard" },
     { value: "rankings", icon: Trophy, label: "Classifiche" },
@@ -20,25 +21,28 @@ export const TabList = ({ setActiveTab, orientation = "horizontal" }: TabListPro
   ];
 
   return (
-    <TabsList 
-      className={cn(
-        "grid w-full max-w-2xl mx-auto mb-8",
-        orientation === "horizontal" ? "grid-cols-7" : "grid-cols-1 gap-2"
-      )}
-    >
-      {tabItems.map(({ value, icon: Icon, label }) => (
-        <TabsTrigger 
-          key={value}
-          value={value} 
-          onClick={() => setActiveTab(value)}
-          className={cn(
-            orientation === "vertical" && "justify-start px-4 py-2"
-          )}
-        >
-          <Icon className="w-4 h-4 mr-2" />
-          {label}
-        </TabsTrigger>
-      ))}
-    </TabsList>
+    <Tabs defaultValue={defaultValue}>
+      <TabsList 
+        className={cn(
+          "grid w-full max-w-2xl mx-auto mb-8",
+          orientation === "horizontal" ? "grid-cols-7" : "grid-cols-1 gap-2"
+        )}
+      >
+        {tabItems.map(({ value, icon: Icon, label }) => (
+          <TabsTrigger 
+            key={value}
+            value={value} 
+            onClick={() => setActiveTab(value)}
+            className={cn(
+              orientation === "vertical" && "justify-start px-4 py-2"
+            )}
+          >
+            <Icon className="w-4 h-4 mr-2" />
+            {label}
+          </TabsTrigger>
+        ))}
+      </TabsList>
+    </Tabs>
   );
 };
+
