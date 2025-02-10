@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import AuthForm from "@/components/auth/AuthForm";
 import PlayersList from "@/components/players/PlayersList";
@@ -95,42 +95,43 @@ const Index = () => {
       <Header setActiveTab={setActiveTab} />
 
       <div className="max-w-6xl mx-auto">
-        {!isMobile && <TabList setActiveTab={setActiveTab} defaultValue={activeTab} />}
+        <Tabs defaultValue={activeTab}>
+          {!isMobile && <TabList setActiveTab={setActiveTab} defaultValue={activeTab} />}
 
-        <div className="grid gap-6">
-          <TabsContent value="dashboard" className="grid gap-6 animate-fadeIn">
-            <StatisticsCard {...stats} />
-            <AchievementsList />
-          </TabsContent>
+          <div className="grid gap-6">
+            <TabsContent value="dashboard" className="grid gap-6 animate-fadeIn">
+              <StatisticsCard {...stats} />
+              <AchievementsList />
+            </TabsContent>
 
-          <TabsContent value="rankings" className="grid gap-6 animate-fadeIn">
-            <RankingsTab />
-          </TabsContent>
+            <TabsContent value="rankings" className="grid gap-6 animate-fadeIn">
+              <RankingsTab />
+            </TabsContent>
 
-          <TabsContent value="presidents" className="animate-fadeIn">
-            <PresidentsTab />
-          </TabsContent>
+            <TabsContent value="presidents" className="animate-fadeIn">
+              <PresidentsTab />
+            </TabsContent>
 
-          <TabsContent value="players" className="animate-fadeIn">
-            <PlayersList />
-          </TabsContent>
+            <TabsContent value="players" className="animate-fadeIn">
+              <PlayersList />
+            </TabsContent>
 
-          <TabsContent value="market" className="animate-fadeIn">
-            <MarketTab />
-          </TabsContent>
+            <TabsContent value="market" className="animate-fadeIn">
+              <MarketTab />
+            </TabsContent>
 
-          <TabsContent value="profile" className="animate-fadeIn">
-            <ProfileCard user={session.user} />
-          </TabsContent>
+            <TabsContent value="profile" className="animate-fadeIn">
+              <ProfileCard user={session.user} />
+            </TabsContent>
 
-          <TabsContent value="rules" className="animate-fadeIn">
-            <RulesTab />
-          </TabsContent>
-        </div>
+            <TabsContent value="rules" className="animate-fadeIn">
+              <RulesTab />
+            </TabsContent>
+          </div>
+        </Tabs>
       </div>
     </div>
   );
 };
 
 export default Index;
-
