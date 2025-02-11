@@ -32,7 +32,6 @@ export const NotificationBell = () => {
   useEffect(() => {
     fetchNotifications();
 
-    // Subscribe to new notifications
     const channel = supabase
       .channel('notifications')
       .on(
