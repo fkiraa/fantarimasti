@@ -10,15 +10,15 @@ interface MobileNavProps {
 }
 
 export const MobileNav = ({ setActiveTab }: MobileNavProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
-    setIsOpen(false);
+    setOpen(false);
   };
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button variant="outline" size="icon" className="md:hidden">
           <Menu className="h-5 w-5" />

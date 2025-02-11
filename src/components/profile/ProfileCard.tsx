@@ -1,4 +1,3 @@
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,8 +7,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
-import { Camera } from "lucide-react";
+import { Camera, ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface ProfileData {
   avatar_url: string | null;
@@ -17,7 +17,8 @@ interface ProfileData {
   description: string | null;
 }
 
-export const ProfileCard = ({ user }: { user: User }) => {
+export const ProfileCard = ({ user }: { user: User | null }) => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState<ProfileData>({
     avatar_url: null,
@@ -27,7 +28,9 @@ export const ProfileCard = ({ user }: { user: User }) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    fetchProfile();
+    if (user) {
+      fetchProfile();
+    }
   }, [user]);
 
   const fetchProfile = async () => {
@@ -125,72 +128,92 @@ export const ProfileCard = ({ user }: { user: User }) => {
     }
   };
 
+  if (!user) {
+    return (
+      <Card className="w-full max-w-2xl mx-auto">
+        <CardContent className="p-6">
+          <p>Devi effettuare l'accesso per vedere il profilo.</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
-    <Card className="w-full max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle>Il tuo profilo</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="flex flex-col items-center space-y-4">
-          <Avatar className="w-24 h-24">
-            <AvatarImage src={profile.avatar_url || ""} />
-            <AvatarFallback>{user.email?.charAt(0).toUpperCase()}</AvatarFallback>
-          </Avatar>
-          <div className="flex items-center gap-2">
-            <Input
-              type="file"
-              accept="image/*"
-              onChange={uploadAvatar}
-              disabled={loading}
-              className="hidden"
-              id="avatar-upload"
-            />
+    <div className="space-y-4">
+      <Button 
+        variant="ghost" 
+        className="flex items-center gap-2" 
+        onClick={() => navigate(-1)}
+      >
+        <ArrowLeft className="w-4 h-4" />
+        Torna indietro
+      </Button>
+      <Card className="w-full max-w-2xl mx-auto">
+        <CardHeader>
+          <CardTitle>Il tuo profilo</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="flex flex-col items-center space-y-4">
+            <Avatar className="w-24 h-24">
+              <AvatarImage src={profile.avatar_url || ""} />
+              <AvatarFallback>{user.email?.charAt(0).toUpperCase()}</AvatarFallback>
+            </Avatar>
+            <div className="flex items-center gap-2">
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={uploadAvatar}
+                disabled={loading}
+                className="hidden"
+                id="avatar-upload"
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={loading}
+                onClick={() => document.getElementById("avatar-upload")?.click()}
+              >
+                <Camera className="w-4 h-4 mr-2" />
+                Cambia foto
+              </Button>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="full-name">Nome completo</Label>
+              <Input
+                id="full-name"
+                value={profile.full_name || ""}
+                onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
+                placeholder="Il tuo nome completo"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="description">Descrizione</Label>
+              <Textarea
+                id="description"
+                value={profile.description || ""}
+                onChange={(e) => setProfile({ ...profile, description: e.target.value })}
+                placeholder="Scrivi qualcosa su di te..."
+                rows={4}
+              />
+            </div>
+
             <Button
-              variant="outline"
-              size="sm"
+              className="w-full"
+              onClick={() => updateProfile({
+                full_name: profile.full_name,
+                description: profile.description,
+              })}
               disabled={loading}
-              onClick={() => document.getElementById("avatar-upload")?.click()}
             >
-              <Camera className="w-4 h-4 mr-2" />
-              Cambia foto
+              Salva modifiche
             </Button>
           </div>
-        </div>
-
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="full-name">Nome completo</Label>
-            <Input
-              id="full-name"
-              value={profile.full_name || ""}
-              onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
-              placeholder="Il tuo nome completo"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="description">Descrizione</Label>
-            <Textarea
-              id="description"
-              value={profile.description || ""}
-              onChange={(e) => setProfile({ ...profile, description: e.target.value })}
-              placeholder="Scrivi qualcosa su di te..."
-              rows={4}
-            />
-          </div>
-
-          <Button
-            className="w-full"
-            onClick={() => updateProfile({
-              full_name: profile.full_name,
-              description: profile.description,
-            })}
-            disabled={loading}
-          >
-            Salva modifiche
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   );
 };

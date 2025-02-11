@@ -72,7 +72,10 @@ export type Database = {
         Row: {
           buyer_id: string | null
           created_at: string
+          expiration_date: string
           id: string
+          max_price: number
+          min_price: number
           player_id: string
           price: number
           seller_id: string
@@ -81,7 +84,10 @@ export type Database = {
         Insert: {
           buyer_id?: string | null
           created_at?: string
+          expiration_date?: string
           id?: string
+          max_price?: number
+          min_price?: number
           player_id: string
           price: number
           seller_id: string
@@ -90,7 +96,10 @@ export type Database = {
         Update: {
           buyer_id?: string | null
           created_at?: string
+          expiration_date?: string
           id?: string
+          max_price?: number
+          min_price?: number
           player_id?: string
           price?: number
           seller_id?: string
@@ -193,6 +202,7 @@ export type Database = {
           full_name: string | null
           id: string
           points: number | null
+          role: Database["public"]["Enums"]["user_role"]
           updated_at: string
           username: string | null
         }
@@ -203,6 +213,7 @@ export type Database = {
           full_name?: string | null
           id: string
           points?: number | null
+          role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
           username?: string | null
         }
@@ -213,6 +224,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           points?: number | null
+          role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
           username?: string | null
         }
@@ -333,7 +345,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      user_role: "president" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
