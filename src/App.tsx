@@ -34,7 +34,7 @@ const App = () => {
   }, []);
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider defaultTheme="system" attribute="class" enableSystem>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <Toaster />
