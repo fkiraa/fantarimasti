@@ -32,7 +32,7 @@ export const TabList = ({ setActiveTab, orientation = "horizontal" }: TabListPro
           value={value} 
           onClick={() => setActiveTab(value)}
           className={cn(
-            orientation === "vertical" && "justify-start px-4 py-2"
+            orientation === "vertical" && "justify-start px-4 py-2 w-full"
           )}
         >
           <Icon className="w-4 h-4 mr-2" />

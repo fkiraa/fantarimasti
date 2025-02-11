@@ -4,6 +4,15 @@ import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface Notification {
   id: string;
@@ -22,6 +31,31 @@ export const NotificationBell = () => {
 
   useEffect(() => {
     fetchNotifications();
+
+    // Subscribe to new notifications
+    const channel = supabase
+      .channel('notifications')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'notifications',
+        },
+        (payload) => {
+          setNotifications(prev => [payload.new as Notification, ...prev]);
+          setUnreadCount(prev => prev + 1);
+          toast({
+            title: (payload.new as Notification).title,
+            description: (payload.new as Notification).message,
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchNotifications = async () => {
@@ -45,31 +79,59 @@ export const NotificationBell = () => {
     }
   };
 
-  const showLatestNotification = () => {
-    const unreadNotifications = notifications.filter(n => !n.read);
-    if (unreadNotifications.length > 0) {
-      const latest = unreadNotifications[0];
-      toast({
-        title: latest.title,
-        description: latest.message,
-        variant: latest.type === 'error' ? 'destructive' : 'default',
-      });
+  const markAsRead = async (id: string) => {
+    const { error } = await supabase
+      .from('notifications')
+      .update({ read: true })
+      .eq('id', id);
+
+    if (!error) {
+      setNotifications(prev =>
+        prev.map(n => (n.id === id ? { ...n, read: true } : n))
+      );
+      setUnreadCount(prev => Math.max(0, prev - 1));
     }
   };
 
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      className="relative"
-      onClick={showLatestNotification}
-    >
-      <Bell className="h-5 w-5" />
-      {unreadCount > 0 && (
-        <span className="absolute -top-1 -right-1 h-4 w-4 text-xs bg-red-500 text-white rounded-full flex items-center justify-center">
-          {unreadCount}
-        </span>
-      )}
-    </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="relative">
+          <Bell className="h-5 w-5" />
+          {unreadCount > 0 && (
+            <span className="absolute -top-1 -right-1 h-4 w-4 text-xs bg-red-500 text-white rounded-full flex items-center justify-center">
+              {unreadCount}
+            </span>
+          )}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-80 bg-background" align="end">
+        <DropdownMenuLabel>Notifiche</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup className="max-h-[300px] overflow-y-auto">
+          {notifications.length === 0 ? (
+            <DropdownMenuItem disabled>
+              Nessuna notifica
+            </DropdownMenuItem>
+          ) : (
+            notifications.map((notification) => (
+              <DropdownMenuItem
+                key={notification.id}
+                className={`flex flex-col items-start p-4 ${!notification.read ? 'bg-muted/50' : ''}`}
+                onClick={() => markAsRead(notification.id)}
+              >
+                <div className="flex items-center justify-between w-full">
+                  <span className="font-medium">{notification.title}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(notification.created_at).toLocaleDateString()}
+                  </span>
+                </div>
+                <p className="text-sm text-muted-foreground mt-1">{notification.message}</p>
+              </DropdownMenuItem>
+            ))
+          )}
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
-};
+}

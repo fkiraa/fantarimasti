@@ -11,9 +11,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useNavigate } from "react-router-dom";
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
 
 export function UserNav() {
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
 
   return (
     <DropdownMenu>
@@ -25,7 +28,7 @@ export function UserNav() {
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
+      <DropdownMenuContent className="w-56 bg-background" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">Il tuo profilo</p>
@@ -36,8 +39,11 @@ export function UserNav() {
           <DropdownMenuItem onClick={() => navigate("/profile")}>
             Profilo
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            Impostazioni
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+            <Sun className="h-4 w-4 rotate-0 scale-100 transition-transform dark:-rotate-90 dark:scale-0 mr-2" />
+            <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100 mr-2" />
+            <span>{theme === "dark" ? "Tema Chiaro" : "Tema Scuro"}</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
