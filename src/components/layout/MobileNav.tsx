@@ -24,8 +24,8 @@ export const MobileNav = ({ setActiveTab }: MobileNavProps) => {
           <Menu className="h-5 w-5" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-[300px] p-0">
-        <div className="flex h-full flex-col py-6">
+      <SheetContent side="left" className="w-[300px] sm:max-w-none">
+        <div className="flex flex-col h-full pt-6">
           <TabList setActiveTab={handleTabChange} orientation="vertical" />
         </div>
       </SheetContent>

@@ -76,7 +76,7 @@ const Index = () => {
 
   if (!session) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-6">
+      <div className="min-h-screen bg-background p-6">
         <header className="text-center mb-12">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent mb-2">
             Fantarimasti
@@ -89,7 +89,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-6 animate-fadeIn">
+    <div className="min-h-screen bg-background p-6 animate-fadeIn">
       <Header setActiveTab={setActiveTab} />
 
       <div className="max-w-6xl mx-auto">
