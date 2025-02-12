@@ -45,3 +45,9 @@ export enum RankingType {
   SETTIMANALE = "SETTIMANALE",
   MENSILE = "MENSILE"
 }
+
+export enum ErrorType {
+  SIMPLE = "SIMPLE",
+  GRAVE = "GRAVE",
+  COLOSSALE = "COLOSSALE"
+}
