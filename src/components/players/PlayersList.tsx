@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Player, PlayerCategory, PlayerStatus } from "@/types/models";
 import { Plus } from "lucide-react";
+import { AddPlayerForm } from "./AddPlayerForm";
 
 const PlayersList = () => {
   const [players, setPlayers] = useState<Player[]>([]);
@@ -77,6 +78,9 @@ const PlayersList = () => {
         title: "Giocatore aggiunto",
         description: "Il giocatore è stato aggiunto alla tua squadra",
       });
+      
+      // Ricarica la lista dei giocatori
+      fetchPlayers();
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -91,42 +95,44 @@ const PlayersList = () => {
   }
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {Object.values(PlayerCategory).map((category) => (
-        <Card key={category} className="backdrop-blur-lg bg-white/90">
-          <CardHeader>
-            <CardTitle>{category}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {players
-                .filter((player) => player.category === category)
-                .map((player) => (
-                  <div
-                    key={player.id}
-                    className="flex items-center justify-between p-2 rounded-lg bg-primary/5 hover:bg-primary/10 transition-colors"
-                  >
-                    <div>
-                      <p className="font-medium">{player.name}</p>
-                      <p className="text-sm text-primary/60">
-                        Prezzo: {player.currentPrice} punti
-                      </p>
-                    </div>
-                    <Button
-                      size="sm"
-                      onClick={() => addPlayerToTeam(player.id, player.currentPrice)}
+    <div className="space-y-6">
+      <AddPlayerForm />
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {Object.values(PlayerCategory).map((category) => (
+          <Card key={category} className="backdrop-blur-lg bg-white/90">
+            <CardHeader>
+              <CardTitle>{category}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {players
+                  .filter((player) => player.category === category)
+                  .map((player) => (
+                    <div
+                      key={player.id}
+                      className="flex items-center justify-between p-2 rounded-lg bg-primary/5 hover:bg-primary/10 transition-colors"
                     >
-                      <Plus className="w-4 h-4 mr-1" /> Aggiungi
-                    </Button>
-                  </div>
-                ))}
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+                      <div>
+                        <p className="font-medium">{player.name}</p>
+                        <p className="text-sm text-primary/60">
+                          Prezzo: {player.currentPrice} punti
+                        </p>
+                      </div>
+                      <Button
+                        size="sm"
+                        onClick={() => addPlayerToTeam(player.id, player.currentPrice)}
+                      >
+                        <Plus className="w-4 h-4 mr-1" /> Aggiungi
+                      </Button>
+                    </div>
+                  ))}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 };
 
 export default PlayersList;
-
