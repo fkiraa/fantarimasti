@@ -40,3 +40,8 @@ export interface TeamPlayer {
   acquiredAt: Date;
 }
 
+export enum RankingType {
+  GENERALE = "GENERALE",
+  SETTIMANALE = "SETTIMANALE",
+  MENSILE = "MENSILE"
+}
