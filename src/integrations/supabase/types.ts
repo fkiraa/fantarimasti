@@ -90,6 +90,96 @@ export type Database = {
           },
         ]
       }
+      market_transactions: {
+        Row: {
+          buyer_id: string
+          created_at: string
+          id: string
+          player_id: string
+          price: number
+          seller_id: string | null
+          transaction_type: string
+        }
+        Insert: {
+          buyer_id: string
+          created_at?: string
+          id?: string
+          player_id: string
+          price: number
+          seller_id?: string | null
+          transaction_type: string
+        }
+        Update: {
+          buyer_id?: string
+          created_at?: string
+          id?: string
+          player_id?: string
+          price?: number
+          seller_id?: string | null
+          transaction_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_transactions_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_transactions_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_transactions_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      monthly_achievements: {
+        Row: {
+          achievement_type: string
+          created_at: string
+          id: string
+          month: number
+          points_awarded: number
+          profile_id: string
+          year: number
+        }
+        Insert: {
+          achievement_type: string
+          created_at?: string
+          id?: string
+          month: number
+          points_awarded: number
+          profile_id: string
+          year: number
+        }
+        Update: {
+          achievement_type?: string
+          created_at?: string
+          id?: string
+          month?: number
+          points_awarded?: number
+          profile_id?: string
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "monthly_achievements_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           created_at: string
@@ -124,6 +214,38 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      player_errors: {
+        Row: {
+          created_at: string
+          error_type: Database["public"]["Enums"]["error_type"]
+          id: string
+          player_id: string
+          points_deducted: number
+        }
+        Insert: {
+          created_at?: string
+          error_type: Database["public"]["Enums"]["error_type"]
+          id?: string
+          player_id: string
+          points_deducted: number
+        }
+        Update: {
+          created_at?: string
+          error_type?: Database["public"]["Enums"]["error_type"]
+          id?: string
+          player_id?: string
+          points_deducted?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_errors_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
             referencedColumns: ["id"]
           },
         ]
@@ -313,6 +435,50 @@ export type Database = {
           },
         ]
       }
+      weekly_statistics: {
+        Row: {
+          bonus_points: number | null
+          created_at: string
+          id: string
+          penalty_points: number | null
+          points: number
+          profile_id: string
+          total_errors: number | null
+          week_number: number
+          year: number
+        }
+        Insert: {
+          bonus_points?: number | null
+          created_at?: string
+          id?: string
+          penalty_points?: number | null
+          points?: number
+          profile_id: string
+          total_errors?: number | null
+          week_number: number
+          year: number
+        }
+        Update: {
+          bonus_points?: number | null
+          created_at?: string
+          id?: string
+          penalty_points?: number | null
+          points?: number
+          profile_id?: string
+          total_errors?: number | null
+          week_number?: number
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weekly_statistics_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -321,6 +487,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      error_type: "SIMPLE" | "GRAVE" | "COLOSSALE"
+      market_status: "OPEN" | "CLOSED"
       player_category: "CAMPIONI" | "TOP" | "SEMITOP"
       player_status: "AVAILABLE" | "INJURED" | "SUSPENDED" | "UNAVAILABLE"
       user_role: "president" | "admin"
