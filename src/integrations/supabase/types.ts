@@ -36,38 +36,6 @@ export type Database = {
         }
         Relationships: []
       }
-      errors: {
-        Row: {
-          created_at: string
-          error_type: string
-          id: string
-          player_id: string | null
-          points: number
-        }
-        Insert: {
-          created_at?: string
-          error_type: string
-          id?: string
-          player_id?: string | null
-          points: number
-        }
-        Update: {
-          created_at?: string
-          error_type?: string
-          id?: string
-          player_id?: string | null
-          points?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "errors_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "players"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       market_listings: {
         Row: {
           buyer_id: string | null
@@ -111,13 +79,6 @@ export type Database = {
             columns: ["buyer_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "market_listings_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "players"
             referencedColumns: ["id"]
           },
           {
@@ -169,27 +130,39 @@ export type Database = {
       }
       players: {
         Row: {
-          category: string
-          cost: number
+          base_price: number
+          category: Database["public"]["Enums"]["player_category"]
           created_at: string
+          current_price: number
           id: string
+          monthly_score: number | null
           name: string
+          popularity: number | null
+          status: Database["public"]["Enums"]["player_status"] | null
           updated_at: string
         }
         Insert: {
-          category: string
-          cost: number
+          base_price: number
+          category: Database["public"]["Enums"]["player_category"]
           created_at?: string
+          current_price: number
           id?: string
+          monthly_score?: number | null
           name: string
+          popularity?: number | null
+          status?: Database["public"]["Enums"]["player_status"] | null
           updated_at?: string
         }
         Update: {
-          category?: string
-          cost?: number
+          base_price?: number
+          category?: Database["public"]["Enums"]["player_category"]
           created_at?: string
+          current_price?: number
           id?: string
+          monthly_score?: number | null
           name?: string
+          popularity?: number | null
+          status?: Database["public"]["Enums"]["player_status"] | null
           updated_at?: string
         }
         Relationships: []
@@ -270,17 +243,20 @@ export type Database = {
       }
       team_players: {
         Row: {
-          created_at: string
+          acquired_at: string
+          acquired_price: number
           player_id: string
           profile_id: string
         }
         Insert: {
-          created_at?: string
+          acquired_at?: string
+          acquired_price: number
           player_id: string
           profile_id: string
         }
         Update: {
-          created_at?: string
+          acquired_at?: string
+          acquired_price?: number
           player_id?: string
           profile_id?: string
         }
@@ -345,6 +321,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      player_category: "CAMPIONI" | "TOP" | "SEMITOP"
+      player_status: "AVAILABLE" | "INJURED" | "SUSPENDED" | "UNAVAILABLE"
       user_role: "president" | "admin"
     }
     CompositeTypes: {

@@ -4,16 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { PlayerCategory } from "@/types/models";
-import { PLAYER_COSTS } from "@/constants/gameRules";
+import { Player, PlayerCategory, PlayerStatus } from "@/types/models";
 import { Plus } from "lucide-react";
-
-interface Player {
-  id: string;
-  name: string;
-  category: PlayerCategory;
-  cost: number;
-}
 
 const PlayersList = () => {
   const [players, setPlayers] = useState<Player[]>([]);
@@ -29,16 +21,22 @@ const PlayersList = () => {
       const { data, error } = await supabase
         .from("players")
         .select("*")
+        .eq('status', PlayerStatus.AVAILABLE)
         .order("name");
       
       if (error) throw error;
 
-      // Convert the raw data to the correct Player type
       const formattedPlayers: Player[] = (data || []).map(player => ({
         id: player.id,
         name: player.name,
-        category: player.category as PlayerCategory, // Convert string to enum
-        cost: player.cost
+        category: player.category as PlayerCategory,
+        basePrice: player.base_price,
+        currentPrice: player.current_price,
+        status: player.status as PlayerStatus,
+        popularity: player.popularity,
+        monthlyScore: player.monthly_score,
+        createdAt: new Date(player.created_at),
+        updatedAt: new Date(player.updated_at)
       }));
 
       setPlayers(formattedPlayers);
@@ -53,7 +51,7 @@ const PlayersList = () => {
     }
   };
 
-  const addPlayerToTeam = async (playerId: string) => {
+  const addPlayerToTeam = async (playerId: string, currentPrice: number) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Devi effettuare l'accesso");
@@ -61,10 +59,19 @@ const PlayersList = () => {
       const { error } = await supabase
         .from("team_players")
         .insert([
-          { profile_id: user.id, player_id: playerId }
+          { 
+            profile_id: user.id, 
+            player_id: playerId,
+            acquired_price: currentPrice
+          }
         ]);
 
-      if (error) throw error;
+      if (error) {
+        if (error.message.includes("più di 5 giocatori")) {
+          throw new Error("Non puoi avere più di 5 giocatori nella tua squadra");
+        }
+        throw error;
+      }
 
       toast({
         title: "Giocatore aggiunto",
@@ -102,12 +109,12 @@ const PlayersList = () => {
                     <div>
                       <p className="font-medium">{player.name}</p>
                       <p className="text-sm text-primary/60">
-                        Costo: {PLAYER_COSTS[player.category]} punti
+                        Prezzo: {player.currentPrice} punti
                       </p>
                     </div>
                     <Button
                       size="sm"
-                      onClick={() => addPlayerToTeam(player.id)}
+                      onClick={() => addPlayerToTeam(player.id, player.currentPrice)}
                     >
                       <Plus className="w-4 h-4 mr-1" /> Aggiungi
                     </Button>

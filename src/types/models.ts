@@ -11,9 +11,13 @@ export interface Player {
   id: string;
   name: string;
   category: PlayerCategory;
-  cost: number;
-  errors: Error[];
-  presidentId?: string;
+  basePrice: number;
+  currentPrice: number;
+  status: PlayerStatus;
+  popularity: number;
+  monthlyScore: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export enum PlayerCategory {
@@ -22,35 +26,17 @@ export enum PlayerCategory {
   SEMITOP = "SEMITOP",
 }
 
-export interface Error {
-  id: string;
-  type: ErrorType;
-  date: Date;
+export enum PlayerStatus {
+  AVAILABLE = "AVAILABLE",
+  INJURED = "INJURED",
+  SUSPENDED = "SUSPENDED",
+  UNAVAILABLE = "UNAVAILABLE",
+}
+
+export interface TeamPlayer {
+  profileId: string;
   playerId: string;
+  acquiredPrice: number;
+  acquiredAt: Date;
 }
 
-export enum ErrorType {
-  SIMPLE = "SIMPLE",
-  GRAVE = "GRAVE",
-  COLOSSALE = "COLOSSALE",
-  ABSENCE = "ABSENCE",
-}
-
-export interface Ranking {
-  id: string;
-  type: RankingType;
-  date: Date;
-  rankings: RankingEntry[];
-}
-
-export interface RankingEntry {
-  position: number;
-  presidentId: string;
-  points: number;
-}
-
-export enum RankingType {
-  DAILY = "DAILY",
-  WEEKLY = "WEEKLY",
-  MONTHLY = "MONTHLY",
-}
