@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Book } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { PLAYER_COSTS, INITIAL_POINTS, ERROR_POINTS } from "@/constants/gameRules";
+import { PlayerCategory, ErrorType } from "@/types/models";
 
 export const RulesTab = () => {
   return (
@@ -27,18 +28,18 @@ export const RulesTab = () => {
             <section>
               <h3 className="font-semibold mb-2">Categorie Giocatori</h3>
               <ul className="list-disc pl-4 space-y-2">
-                <li>CAMPIONI: {PLAYER_COSTS.CAMPIONI} punti</li>
-                <li>TOP: {PLAYER_COSTS.TOP} punti</li>
-                <li>SEMITOP: {PLAYER_COSTS.SEMITOP} punti</li>
+                <li>CAMPIONI: {PLAYER_COSTS[PlayerCategory.CAMPIONI]} punti</li>
+                <li>TOP: {PLAYER_COSTS[PlayerCategory.TOP]} punti</li>
+                <li>SEMITOP: {PLAYER_COSTS[PlayerCategory.SEMITOP]} punti</li>
               </ul>
             </section>
 
             <section>
               <h3 className="font-semibold mb-2">Penalità per Errori</h3>
               <ul className="list-disc pl-4 space-y-2">
-                <li>Errore Semplice: {ERROR_POINTS.SIMPLE} punti</li>
-                <li>Errore Grave: {ERROR_POINTS.GRAVE} punti</li>
-                <li>Errore Colossale: {ERROR_POINTS.COLOSSALE} punti</li>
+                <li>Errore Semplice: {ERROR_POINTS[ErrorType.SIMPLE]} punti</li>
+                <li>Errore Grave: {ERROR_POINTS[ErrorType.GRAVE]} punti</li>
+                <li>Errore Colossale: {ERROR_POINTS[ErrorType.COLOSSALE]} punti</li>
               </ul>
             </section>
 
